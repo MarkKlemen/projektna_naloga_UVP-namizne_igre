@@ -1,4 +1,62 @@
-# 1. Kako ti lahko selenium najde tak element v html kodi: <a href="/browse/boardgame/page/2" target="_self" title="next page"><b>Next »</b></a>
+# 1. Kako v pythonu naredis novo mapo in kako lahko to mapo ob klicu funkcije najprej zbirses ter jo nato ponovno ustvaris? Ali za to obstaja kaksna knjiznica?
+
+V Pythonu je delo z mapami (imeniki) zelo preprosto. Za to imamo na voljo dve odlični vgrajeni knjižnici: os (klasična pot) in pathlib (modernejša, bolj intuitivna pot). Za brisanje map, ki niso prazne, pa poleg njiju uporabimo še knjižnico shutil.
+
+Za tvoj primer (izbriši, če obstaja, in nato ustvari znova) je najbolj elegantna uporaba knjižnice pathlib v kombinaciji s shutil.
+
+Tukaj je celoten postopek in koda, kako to narediš.
+
+Rešitev z modernim pathlib in shutil
+To je trenutno najbolj priporočljiv način v Pythonu, saj z mapami delaš kot z objekti, koda pa je zelo čitljiva.
+
+Python
+from pathlib import Path
+import shutil
+
+def ponovno_ustvari_mapo(ime_mape: str):
+    # Ustvarimo objekt Path za našo mapo
+    pot = Path(ime_mape)
+    
+    # 1. Preverimo, če mapa že obstaja
+    if pot.exists():
+        # Če obstaja, jo izbrišemo (tudi če vsebuje datoteke)
+        shutil.rmtree(pot)
+        print(f"Mapa '{ime_mape}' je bila uspešno izbrisana.")
+    
+    # 2. Ustvarimo popolnoma novo, prazno mapo
+    # parents=True omogoča, da ustvari vmesne mape, če ne obstajajo
+    # exist_ok=True prepreči napako, če bi mapa slučajno že obstajala
+    pot.mkdir(parents=True, exist_ok=True)
+    print(f"Mapa '{ime_mape}' je bila uspešno ustvarjena.")
+
+## Primer klica funkcije
+ponovno_ustvari_mapo("moja_nova_mapa")
+Alternativa s klasično knjižnico os
+Če ti je bolj všeč klasični pristop, kjer z mapami upravljaš preko nizov (teksta), lahko uporabiš modul os. Logika ostaja popolnoma ista:
+
+Python
+import os
+import shutil
+
+def ponovno_ustvari_mapo_os(ime_mape: str):
+    # 1. Preverimo in izbrišemo, če obstaja
+    if os.path.exists(ime_mape):
+        shutil.rmtree(ime_mape)
+        print(f"Mapa '{ime_mape}' izbrisana.")
+        
+    # 2. Ustvarimo mapo znova
+    os.makedirs(ime_mape, exist_ok=True)
+    print(f"Mapa '{ime_mape}' ustvarjena.")
+
+## Primer klica
+ponovno_ustvari_mapo_os("stara_sola_mapa")
+Ključne funkcije, ki si jih velja zapomniti:
+shutil.rmtree(): Ključna funkcija, saj navadni os.rmdir() ali Path.rmdir() javita napako, če mapa ni popolnoma prazna. rmtree (remove tree) pa brez milosti pobriše mapo in vso njeno vsebino (datoteke in podmape).
+
+exist_ok=True: Zelo koristen parameter pri ustvarjanju map, ki prepreči, da bi Python vrgel napako (FileExistsError), če mapa iz kakršnega koli razloga v tistem trenutku že obstaja.
+
+
+# 2. Kako ti lahko selenium najde tak element v html kodi: <a href="/browse/boardgame/page/2" target="_self" title="next page"><b>Next »</b></a>
 
 Za iskanje tega elementa v Seleniumu imaš na voljo več odličnih načinov, odvisno od tega, kaj je najbolj stabilno v tvojem sistemu. Ker gre za povezavo, ki vodi na naslednjo stran (next page), imamo nekaj zelo elegantnih rešitev.
 

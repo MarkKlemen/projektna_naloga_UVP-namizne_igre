@@ -99,3 +99,55 @@ Znak ^= pomeni "se začne z".
 Python
 element = driver.find_element(By.CSS_SELECTOR, "a[href^='/browse/boardgame/page/']")
 💡 Nasvet za prakso: Če delaš paginacijo (klikanje skozi strani), je Metoda 2a (//a[@title='next page']) ponavadi najbolj stabilna, saj se atribut title="next page" verjetno ne bo spreminjal, medtem ko se bo številka strani v href ob vsakem kliku povečala.
+
+# 3. Kako z beautiful soup najdes html element ki ima znacko span in nek class oziroma atribut?
+
+Iskanje elementa span z določenim razredom (class) ali drugim atributom je z Beautiful Soup zelo preprosto. Za to se najpogosteje uporablja metoda find() (če iščeš samo prvi zadetek) ali find_all() (če želiš najti vse takšne elemente).
+
+Tukaj so trije najpogostejši načini, kako to storiti.
+
+1. Iskanje po razredu (Class)
+Ker je beseda class v Pythonu rezervirana ključna beseda, Beautiful Soup za iskanje razredov uporablja argument class_ (s podčrtajem na koncu).
+
+Python
+from bs4 import BeautifulSoup
+
+html = '<div class="vsebina"><span class="izpostavljeno">To je tekst</span></div>'
+soup = BeautifulSoup(html, 'html.parser')
+
+## Najde prvi span z razredom "izpostavljeno"
+element = soup.find('span', class_='izpostavljeno')
+
+print(element.text)  # Izpis: To je tekst
+2. Iskanje po poljubnem atributu (npr. id, data-*, href)
+Če želiš element poiskati po kakšnem drugem atributu, uporabi argument attrs, kamor podaš slovar (dictionary) z imenom in vrednostjo atributa.
+
+Python
+html = '<span data-kategorija="novice">Najnovejše novice...</span>'
+soup = BeautifulSoup(html, 'html.parser')
+
+## Iskanje preko slovarja atributov
+element = soup.find('span', attrs={'data-kategorija': 'novice'})
+
+print(element.text)
+(Ta način deluje odlično tudi za class, npr. attrs={'class': 'izpostavljeno'}).
+
+3. Uporaba CSS selektorjev (select in select_one)
+Če si navajen/-a dela s CSS-om ali JavaScriptom, ti bo verjetno najbolj všeč metoda .select_one() (za en element) ali .select() (za seznam elementov). Tukaj uporabljaš klasično CSS sintakso.
+
+Python
+html = '<span class="zeleno" id="glavni-naslov">Pozdravljen svet!</span>'
+soup = BeautifulSoup(html, 'html.parser')
+
+## Iskanje s CSS selektorjem za razred (.)
+element_class = soup.select_one('span.zeleno')
+
+## Iskanje s CSS selektorjem za poljuben atribut ([atribut=vrednost])
+element_attr = soup.select_one('span[id="glavni-naslov"]')
+
+print(element_class.text)
+Hitri povzetek:
+
+Za iskanje enega elementa uporabi: soup.find('span', class_='ime-razreda')
+
+Za iskanje vseh takšnih elementov uporabi: soup.find_all('span', class_='ime-razreda') (vrne seznam/list).

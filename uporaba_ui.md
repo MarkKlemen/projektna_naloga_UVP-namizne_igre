@@ -151,3 +151,82 @@ Hitri povzetek:
 Za iskanje enega elementa uporabi: soup.find('span', class_='ime-razreda')
 
 Za iskanje vseh takšnih elementov uporabi: soup.find_all('span', class_='ime-razreda') (vrne seznam/list).
+
+# 4. Kaj predlagas da naredim, ce mi ob zajemu podatkov s selenium cez nekaj casa vrne na spletni strani to napako: Koda napake: Out of Memory
+
+Ta napaka (Out of Memory) je pri dolgotrajnem zajemanju podatkov (web scraping) s Seleniumom zelo pogosta težava. Pomeni, da je brskalnik (običajno Chrome ali Firefox, ki ga upravlja Selenium) porabil ves razpoložljiv sistemski pomnilnik (RAM).
+
+Selenium sam po sebi ne sprošča pomnilnika samodejno, ampak z vsakim odprtim zavihkom, naloženo sliko, oglasom in javascriptom kopiči "smeti" v pomnilniku, dokler se brskalnik ne sesuje.
+
+Tukaj je vrstni red korakov, s katerimi lahko to težavo trajno rešiš.
+
+1. Najhitrejša in najbolj učinkovita rešitev: Periodično ponovno zaganjanje gonilnika (Driver Restart)
+Namesto da imaš eno sejo brskalnika odprto več ur ali dni, proces razdeli na manjše dele.
+
+Po določenem številu obiskanih strani (npr. na vsakih 100 ali 200 strani) popolnoma zapri brskalnik in odpri novega. S tem popolnoma sprostiš ves RAM, ki ga je brskalnik zasedel.
+
+Python
+## Primer v Pythonu:
+import time
+from selenium import webdriver
+
+def run_scraping(urls):
+    batch_size = 100  # Ponovni zagon po 100 straneh
+    
+    for i in range(0, len(urls), batch_size):
+        batch = urls[i:i+batch_size]
+        
+        # Zagon novega brskalnika za vsako serijo
+        driver = webdriver.Chrome() 
+        
+        for url in batch:
+            try:
+                driver.get(url)
+                # Tvoj kod za zajem podatkov...
+            except Exception as e:
+                print(f"Napaka pri {url}: {e}")
+                
+        # Ključno: .quit() zapre brskalnik in sprosti RAM (ne uporabljaj samo .close())
+        driver.quit() 
+        time.sleep(5)  # Kratka pavza, da sistem počisti procese
+2. Onemogoči nepotrebne elemente (Slike, JavaScript, Oglaševanje)
+Brskalnik porabi ogromno pomnilnika za nalaganje slik, oglasov in izvajanje težkih skript. Če za zajem podatkov potrebuješ le HTML strukturo ali tekst, te elemente onemogoči že ob zagonu.
+
+Dodaj naslednje nastavitve (Chrome Options):
+
+Python
+from selenium.webdriver.chrome.options import Options
+
+chrome_options = Options()
+
+## 1. Zaženi v brezglavem načinu (headless) - porabi bistveno manj RAM-a
+chrome_options.add_argument("--headless") 
+
+## 2. Onemogoči GPU (grafično pospeševanje), ki rado pušča pomnilnik
+chrome_options.add_argument("--disable-gpu")
+
+## 3. Pomembno za okolja z omejenim RAM-om (npr. Docker ali manjši strežniki)
+chrome_options.add_argument("--no-sandbox")
+chrome_options.add_argument("--disable-dev-shm-usage") # Uporablja sistemski RAM namesto /dev/shm
+
+## 4. Onemogoči nalaganje slik (ogromen prihranek RAM-a)
+prefs = {"profile.managed_default_content_settings.images": 2}
+chrome_options.add_experimental_option("prefs", prefs)
+
+driver = webdriver.Chrome(options=chrome_options)
+3. Prepreči kopičenje zgodovine in sej (Sessions & History)
+Če znotraj iste seje obiščeš na tisoče strani, brskalnik v pomnilnik shranjuje zgodovino (History) in predpomnilnik (Cache).
+
+Izogibaj se odpiranju novih zavihkov (target="_blank"): Če se odpirajo novi zavihki, jih sproti zapiraj z driver.close() in preklopi nazaj na glavni zavihek.
+
+Redno briši piškotke: Med delovanjem lahko občasno pokličeš driver.delete_all_cookies(), kar lahko pomaga pri nekaterih straneh, ki agresivno sledijo sejam.
+
+4. Alternativni pristop (Če Selenium ni nujen)
+Selenium je odličen za strani, ki za prikaz vsebine nujno potrebujejo delovanje JavaScripta. Če pa opaziš, da se podatki na ciljni strani nalagajo preko statičnega HTML-ja ali pa jih stran pridobiva preko skritih API klicev (to preveriš v Network zavihku med orodji za razvijalce):
+
+Uporabi requests in BeautifulSoup: To je svetlobno hitreje in porabi le drobec pomnilnika, saj sploh ne odpiraš pravega brskalnika.
+
+Uporabi Playwright: Če še vedno potrebuješ brskalnik z JS podporo, je Playwright sodobnejša in pogosto bolje optimizirana alternativa Seleniumu, ki lažje upravlja s pomnilnikom.
+
+Kaj predlagam za začetek?
+Najprej poskusi v svoj kod dodati "Batching" (točko 1) in preveri, če se sesutja prenehajo. To običajno reši 95 % vseh "Out of Memory" težav pri Seleniumu.

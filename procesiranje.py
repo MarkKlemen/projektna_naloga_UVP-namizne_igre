@@ -12,13 +12,15 @@ def podrobnosti_o_igrah():
         stran_pot = os.path.join(mapa, stran)
         with open(stran_pot, encoding="utf-8") as d:
             juha = BeautifulSoup(d.read(), "html.parser")
+            #id
+            id_igre = re.match(r"\d+", stran).group() #group vrne niz od tega kar je najdeno z match
             #ime
             j_ime = juha.find("span", attrs={"itemprop": "name"})
             ime = j_ime.get_text().strip() if j_ime else "None"
             #rank
             j_rank = juha.find("span", class_="rank-number")
             rank = j_rank.get_text().strip() if j_rank else "None"
-            #žanr
+            #žanr (samo najbolj relevanten)
             vsi_zanri = juha.find_all("span", class_="rank-title ng-binding") #vec moznih, hocemo prvega, a ne "Overall", saj je to za rank
             zanr = "None"
             for i in vsi_zanri:
@@ -68,6 +70,7 @@ def podrobnosti_o_igrah():
                 cena += "+"
 
             vsi_podatki.append({
+                "id": id_igre,
                 "ime": ime,
                 "rank": rank,
                 "žanr": zanr,
@@ -93,6 +96,7 @@ def zapisi_v_csv(podatki):
         pisatelj = csv.writer(c)
         pisatelj.writerow(
             [
+                "id",
                 "ime",
                 "rank",
                 "žanr",

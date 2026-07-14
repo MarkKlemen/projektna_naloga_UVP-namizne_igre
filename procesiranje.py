@@ -35,7 +35,8 @@ def podrobnosti_o_igrah():
             j_st_ratingov = juha.find("a", attrs={"ui-sref": "geekitem.ratings({rated:1,comment:'',status:''})"})
             if j_st_ratingov:
                 tekst_ratingov = j_st_ratingov.get_text().strip()
-                re_ratingi = re.search(r"\d+[A-Z]?\b", tekst_ratingov) #ta regex je za to, ce je namesto 1000 napisano "K", ali pa namesto 1000000 napisano "M"
+                re_ratingi = re.search(r"\d+(?:[.,]\d+)?[KM]?\b", tekst_ratingov) #ta regex je za to, ce je namesto 1000 napisano "K", ali pa namesto 1000000 napisano "M"
+                #?: je za nezajemalne oklepaje v regex
                 st_ratingov = re_ratingi.group() if re_ratingi else "None"
             else:
                 st_ratingov = "None"
@@ -45,30 +46,26 @@ def podrobnosti_o_igrah():
             #predlagana starost
             j_starost = juha.find("span", attrs={"itemprop": "suggestedMinAge"})
             starost = j_starost.get_text().strip() if j_starost else "None"
-            starost += "+"
+            if starost != "None":
+                starost += "+"
             #težavnost
-            j_tezavnost = juha.find("span", class_="ng-binding gameplay-weight")
-            tezavnost = j_tezavnost.get_text().strip() if j_tezavnost else "None"
-            tezavnost += "/5"
+            j_tezavnost = juha.find("span", attrs={"item-poll-button": "boardgameweight"})
+            tezavnost = j_tezavnost.get_text().replace("/ 5 Complexity Rating", "").strip() if j_tezavnost else "None"
+            if tezavnost != "None":
+                tezavnost += "/5"
             #predlagano število igralcev
             j_igralci = juha.find("span", attrs={"ng-show": "::geekitemctrl.geekitem.data.item.polls.userplayers.totalvotes > 0"})
             igralci = j_igralci.get_text().strip() if j_igralci else "None"
             #čas igranja
-            spodnje = juha.find("span", attrs={"ng-if": "min > 0"})
-            zgornje = juha.find("span", attrs={"ng-if": "max>0 && min != max"})
-
-            min_cas = spodnje.get_text().strip() if spodnje else ""
-            max_cas = zgornje.get_text().strip() if zgornje else ""
-
-            if min_cas and max_cas:
-                cas = f"{min_cas}{max_cas} min" #vezaj je ze vkljucen
-            elif min_cas:
-                cas = f"{min_cas} min"
-            else:
-                cas = "None"
+            j_cas = juha.find("span", attrs={"min": "::geekitemctrl.geekitem.data.item.minplaytime"})
+            cas = j_cas.get_text().strip() if j_cas else "None"
+            if cas != "None":
+                cas += " min"
             #cena
             j_cena = juha.find("a", attrs={"ui-sref": "geekitem.marketplace.ebay"})
             cena = j_cena.get_text().replace("from", "").replace("–", "").replace("eBay", "").strip() if j_cena else "None"
+            if cena != "None":
+                cena += "+"
 
             vsi_podatki.append({
                 "ime": ime,
@@ -85,44 +82,44 @@ def podrobnosti_o_igrah():
             })
     return vsi_podatki
 
+def zapisi_v_csv(podatki):
+    if os.path.exists("podatki"):
+        shutil.rmtree("podatki")
+    os.makedirs("podatki", exist_ok=True)
+    pot_do_csv = os.path.join("podatki", "podatki.csv")
+    koncni_podatki = podrobnosti_o_igrah()
 
-if os.path.exists("podatki"):
-    shutil.rmtree("podatki")
-os.makedirs("podatki", exist_ok=True)
-pot_do_csv = os.path.join("podatki", "podatki.csv")
-koncni_podatki = podrobnosti_o_igrah()
-
-with open("podatki/podatki.csv", "w", encoding="utf-8", newline="") as c:
-    pisatelj = csv.writer(c)
-    pisatelj.writerow(
-        [
-            "ime",
-            "rank",
-            "žanr",
-            "rating",
-            "število rating-ov",
-            "leto izdaje",
-            "predlagana starost",
-            "težavnost",
-            "predlagano število igralcev",
-            "čas igranja",
-            "cena"
-        ]
-    )
-
-    for igra in koncni_podatki:
+    with open("podatki/podatki.csv", "w", encoding="utf-8", newline="") as c:
+        pisatelj = csv.writer(c)
         pisatelj.writerow(
             [
-                igra["ime"],
-                igra["rank"],
-                igra["žanr"],
-                igra["rating"],
-                igra["število rating-ov"],
-                igra["leto izdaje"],
-                igra["predlagana starost"],
-                igra["težavnost"],
-                igra["predlagano število igralcev"],
-                igra["čas igranja"],
-                igra["cena"]
+                "ime",
+                "rank",
+                "žanr",
+                "rating",
+                "število rating-ov",
+                "leto izdaje",
+                "predlagana starost",
+                "težavnost",
+                "predlagano število igralcev",
+                "čas igranja",
+                "cena"
             ]
         )
+
+        for igra in koncni_podatki:
+            pisatelj.writerow(
+                [
+                    igra["ime"],
+                    igra["rank"],
+                    igra["žanr"],
+                    igra["rating"],
+                    igra["število rating-ov"],
+                    igra["leto izdaje"],
+                    igra["predlagana starost"],
+                    igra["težavnost"],
+                    igra["predlagano število igralcev"],
+                    igra["čas igranja"],
+                    igra["cena"]
+                ]
+            )

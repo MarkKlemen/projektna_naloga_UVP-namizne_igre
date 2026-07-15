@@ -124,10 +124,7 @@ def podrobnosti_o_igrah():
     return vsi_podatki
 
 def zapisi_v_csv(podatki):
-    os.makedirs("podatki", exist_ok=True)
-    pot_do_csv = os.path.join("podatki", "podatki.csv")
-
-    with open(pot_do_csv, "w", encoding="utf-8", newline="") as c:
+    with open("podatki.csv", "w", encoding="utf-8", newline="") as c:
         pisatelj = csv.writer(c)
         pisatelj.writerow(
             [

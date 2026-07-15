@@ -2,8 +2,8 @@
 
 ## Opis projektne naloge
 Ta projektna naloga je namenjena zbiranju, obdelavi in anlizi podatkov namiznih iger s spletne strani BoardGameGeek.
-Iz spletne strani so najprej zbrana imena spletnih strani posameznih iger, ki so zapisana v mapi surovi_podatki, potem pa Selenium obišče še vsako od teh posebej in zbere podrobnosti.
-Potem so te podrobnosti "očiščene" in zapisane v CSV datoteko v mapi podatki.
+Iz spletne strani so najprej zbrana imena spletnih strani posameznih iger, potem pa Selenium obišče še vsako od teh posebej in zbere podrobnosti.
+Te podrobnosti so nato "očiščene" in zapisane v CSV datoteko podatki.
 S pomočjo JupiterNotebook lahko potem s podatki iz CSV datoteke pripravimo zanimive tabele in grafe.
 Poleg teh datotek je še datoteka uporaba_ui.md, kjer imam zapisane pogovore z AI, ki mi je občasno pomagal pri raznih težavah pri projektni nalogi.
 

@@ -5,7 +5,7 @@ Ta projektna naloga je namenjena zbiranju, obdelavi in anlizi podatkov namiznih 
 Iz spletne strani so najprej zbrana imena spletnih strani posameznih iger, ki so zapisana v mapi surovi_podatki, potem pa Selenium obišče še vsako od teh posebej in zbere podrobnosti.
 Potem so te podrobnosti "očiščene" in zapisane v CSV datoteko v mapi podatki.
 S pomočjo JupiterNotebook lahko potem s podatki iz CSV datoteke pripravimo zanimive tabele in grafe.
-Poleg teh datotek je se datoteka uporaba_ui.md, kjer imam zapisane pogove z AI, ki mi je občasno pomagal pri raznih težavah pri projektni nalogi.
+Poleg teh datotek je še datoteka uporaba_ui.md, kjer imam zapisane pogovore z AI, ki mi je občasno pomagal pri raznih težavah pri projektni nalogi.
 
 ## Zagon programa
 Glavna datoteka projekta je main.py, ki zažene celoten proces. V terminal samo vpišeš: python main.py.

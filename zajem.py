@@ -18,11 +18,11 @@ def shrani_igre():
 
     gumb_piskotki = driver.find_element(By.CSS_SELECTOR, "button.fc-cta-consent")
     gumb_piskotki.click()
-    time.sleep(5) #cas za prijavo, da dopusti vec kot 10 strani podatkov, drugace je samo 953 iger
+    time.sleep(30) #cas za prijavo, da dopusti vec kot 10 strani podatkov, drugace je samo 953 iger
 
     vse_igre = set()
 
-    for stran in range(1, 2):
+    for stran in range(1, 15):
         trenutni_url = f"https://boardgamegeek.com/browse/boardgame/page/{stran}?sort=numvoters&sortdir=desc"
         driver.get(trenutni_url)
         time.sleep(3)

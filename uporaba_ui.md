@@ -230,3 +230,140 @@ Uporabi Playwright: Če še vedno potrebuješ brskalnik z JS podporo, je Playwri
 
 Kaj predlagam za začetek?
 Najprej poskusi v svoj kod dodati "Batching" (točko 1) in preveri, če se sesutja prenehajo. To običajno reši 95 % vseh "Out of Memory" težav pri Seleniumu.
+
+# 5. Ali se lahko kako zazene funkcijo ki je znotraj datoteke main.py, samo da vpises v terminal ime datoteke?
+
+Če imaš v main.py definirano funkcijo, je ne moreš neposredno zagnati samo z imenom datoteke. Če v terminal napišeš:
+
+python main.py
+
+se bo izvedla samo koda, ki je na vrhu nivoju datoteke (torej koda, ki ni znotraj funkcij), ne pa avtomatsko vse funkcije.
+
+Primer:
+
+main.py:
+
+def pozdrav():
+    print("Živjo!")
+
+def sestej(a, b):
+    return a + b
+
+Če zaženeš:
+
+python main.py
+
+se ne bo zgodilo nič, ker nobena funkcija ni poklicana.
+
+Običajen način je, da dodaš:
+
+def main():
+    pozdrav()
+    print(sestej(2, 3))
+
+
+if __name__ == "__main__":
+    main()
+
+Potem:
+
+python main.py
+
+zažene main() in posledično vse, kar je v njej.
+
+Če pa želiš iz terminala poklicati točno določeno funkcijo, lahko uporabiš Python interpreter:
+
+python -c "import main; main.pozdrav()"
+
+To bo:
+
+uvozilo main.py
+našlo funkcijo pozdrav
+jo zagnalo
+
+Lahko tudi:
+
+python -c "from main import sestej; print(sestej(5, 7))"
+
+Za projektne naloge je najbolj običajno:
+
+projekt/
+│
+├── main.py
+├── podatki.py
+├── analiza.py
+└── README.md
+
+in v main.py:
+
+def main():
+    # tukaj pokličeš vse funkcije
+    ...
+
+
+if __name__ == "__main__":
+    main()
+
+V README potem napišeš samo:
+
+python main.py
+
+in uporabniku ni treba vedeti, da obstaja funkcija main(). Zagon datoteke je dovolj.
+
+# 6. Napisi primer kode za korelacijsko matriko za seznam podatkov v jupiter notebook
+
+Tukaj je preprost, a izjemno uporaben primer, kako v Jupyter Notebooku pripraviš podatke, izračunaš korelacijsko matriko s knjižnico Pandas in jo vizualiziraš s čudovitim toplotnim zemljevidom (Heatmap) s pomočjo knjižnice Seaborn.
+
+Za zagon te kode se prepričaj, da imaš nameščene knjižnice pandas, seaborn in matplotlib. Če jih nimaš, jih lahko v celici Jupyter Notebooka namestiš z ukazom:
+
+Bash
+!pip install pandas seaborn matplotlib
+Koda za Jupyter Notebook
+Celotno kodo lahko skopiraš neposredno v svojo celico v Jupyterju:
+
+Python
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+## 1. Ustvarimo namišljene podatke (npr. o prodaji trgovine)
+podatki = {
+    'Oglaševanje_EUR': [1000, 1500, 2000, 2500, 3000, 3500, 4000],
+    'Obisk_Spletne_Strani': [500, 600, 750, 900, 1100, 1200, 1400],
+    'Prodaja_Kosov': [50, 55, 70, 85, 95, 110, 130],
+    'Zunanje_Temperature_C': [15, 18, 22, 25, 28, 24, 20]
+}
+
+## Pretvorba v Pandas DataFrame (tabelo)
+df = pd.DataFrame(podatki)
+
+## 2. Izračun korelacijske matrike (uporablja se Pearsonov koeficient po privzetem)
+korelacijska_matrika = df.corr()
+
+## Prikaz matrike v lepi tabelarični obliki v Jupyterju
+print("Korelacijska matrika v tabeli:")
+display(korelacijska_matrika)
+
+## 3. Vizualizacija s toplotnim zemljevidom (Heatmap)
+## Nastavimo velikost grafa
+plt.figure(figsize=(8, 6))
+
+## Ustvarimo heatmap
+sns.heatmap(
+    korelacijska_matrika, 
+    annot=True,          # Izpiše vrednosti koeficientov v kvadratke
+    cmap='coolwarm',     # Barvna shema (modra za negativno, rdeča za pozitivno korelacijo)
+    vmin=-1, vmax=1,     # Razpon vrednosti na barvni lestvici
+    linewidths=0.5,      # Tanke črte med kvadratki za boljšo preglednost
+    fmt=".2f"            # Zaokroževanje na 2 decimalni mesti
+)
+
+## Naslov grafa
+plt.title('Toplotni zemljevid korelacijske matrike', fontsize=14, pad=15)
+plt.show()
+Hitra pomoč pri interpretaciji vrednosti:
+Vrednost blizu 1: Močna pozitivna povezava (npr. več kot zapravimo za oglaševanje, več imamo obiska).
+
+Vrednost blizu -1: Močna negativna povezava (ko ena vrednost raste, druga upada).
+
+Vrednost blizu 0: Med podatki ni opazne linearne povezave (npr. zunanja temperatura morda nima posebne povezave s prodajo naših izdelkov).

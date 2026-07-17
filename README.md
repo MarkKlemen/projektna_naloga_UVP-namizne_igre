@@ -1,11 +1,11 @@
 # Analiza podatkov o namiznih igrah
 
 ## Opis projektne naloge
-Ta projektna naloga je namenjena zbiranju, obdelavi in anlizi podatkov namiznih iger s spletne strani BoardGameGeek.
+Ta projektna naloga je namenjena zbiranju, obdelavi in analizi podatkov namiznih iger s spletne strani BoardGameGeek.
 Iz spletne strani so najprej zbrana imena spletnih strani posameznih iger, potem pa Selenium obišče še vsako od teh posebej in zbere podrobnosti.
-Te podrobnosti so nato "očiščene" in zapisane v CSV datoteko podatki.
-S pomočjo JupiterNotebook lahko potem s podatki iz CSV datoteke pripravimo zanimive tabele in grafe.
-Poleg teh datotek je še datoteka uporaba_ui.md, kjer imam zapisane pogovore z AI, ki mi je občasno pomagal pri raznih težavah pri projektni nalogi.
+Te podrobnosti so nato "očiščene" in zapisane v CSV datoteko podatki.csv.
+S pomočjo Jupyter Notebook lahko potem s podatki iz CSV datoteke pripravimo zanimive tabele in grafe.
+Poleg teh datotek je še datoteka uporaba_ui.md, kjer imam zapisane pogovore z UI, ki mi je občasno pomagal pri raznih težavah pri projektni nalogi.
 
 ## Zagon programa
 Glavna datoteka projekta je main.py, ki zažene celoten proces. V terminal samo vpišeš: python main.py.

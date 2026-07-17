@@ -56,14 +56,14 @@ shutil.rmtree(): Ključna funkcija, saj navadni os.rmdir() ali Path.rmdir() javi
 exist_ok=True: Zelo koristen parameter pri ustvarjanju map, ki prepreči, da bi Python vrgel napako (FileExistsError), če mapa iz kakršnega koli razloga v tistem trenutku že obstaja.
 
 
-# 2. Kako ti lahko selenium najde tak element v html kodi: '<a href="/browse/boardgame/page/2" target="_self" title="next page"><b>Next »</b></a>'
+# 2. Kako ti lahko selenium najde tak element v html kodi: \<a href="/browse/boardgame/page/2" target="_self" title="next page">\<b>Next »\</b>\</a>
 
 Za iskanje tega elementa v Seleniumu imaš na voljo več odličnih načinov, odvisno od tega, kaj je najbolj stabilno v tvojem sistemu. Ker gre za povezavo, ki vodi na naslednjo stran (next page), imamo nekaj zelo elegantnih rešitev.
 
 Tukaj so najboljši načini, zapisani v jeziku Python (ki se najpogosteje uporablja s Seleniumom):
 
 1. Preko besedila v povezavi (Najbolj preprosto)
-Če veš, da bo na gumbu vedno pisalo "Next »", lahko uporabiš iskanje preko besedila. Ker je znotraj značke <a> še krepki tisk <b>, je najbolj varno uporabiti PARTIAL_LINK_TEXT (delno ujemanje).
+Če veš, da bo na gumbu vedno pisalo "Next »", lahko uporabiš iskanje preko besedila. Ker je znotraj značke \<a> še krepki tisk \<b>, je najbolj varno uporabiti PARTIAL_LINK_TEXT (delno ujemanje).
 
 Python
 from selenium.webdriver.common.by import By

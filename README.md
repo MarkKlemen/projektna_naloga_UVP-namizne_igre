@@ -9,6 +9,8 @@ Poleg teh datotek je še datoteka uporaba_ui.md, kjer imam zapisane pogovore z U
 
 ## Zagon programa
 Glavna datoteka projekta je main.py, ki zažene celoten proces. V terminal samo vpišeš: python main.py.
+Pomembno: po tem ko se program zažene, in se odpre prva spletna stran, počakajte, da selenium klikne piškotke, potem pa se nujno prijavite, saj sicer program ne bo deloval.
+Pred tem je seveda treba imeti že ustvarjen profil na tej spletni strani.
 
 ## Podatki
 
